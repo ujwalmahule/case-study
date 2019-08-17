@@ -1,4 +1,4 @@
-package com.ujwal.controller;
+package com.ujwal.mentorondemand.controller;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ujwal.exception.ResourceNotFoundException;
-import com.ujwal.model.User;
-import com.ujwal.repository.UserRepository;
+import com.ujwal.mentorondemand.exception.ResourceNotFoundException;
+import com.ujwal.mentorondemand.model.User;
+import com.ujwal.mentorondemand.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api")
@@ -41,20 +41,19 @@ public class UserController {
 		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 	
-	/*
-	@GetMapping("/users/{email}")
+	@GetMapping("/user/email/{email}")
 	public User getUserById(@PathVariable(value = "email") String email) {
 		return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 	}
 	
-	@PutMapping("/users/{email}")
+	@PutMapping("/user/email/{email}")
 	public User updateUser(@PathVariable String email, @Valid @RequestBody User user) {
 		return userRepository.findByEmail(email).map(foundUser -> {
 			updateUser(foundUser, user);
 			return userRepository.save(foundUser);
 		}).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 	}
-	*/
+	
 	@PutMapping("/users/{id}")
 	public User updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
 		return userRepository.findById(id).map(foundUser -> {
@@ -71,6 +70,14 @@ public class UserController {
 		}).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 	
+	@DeleteMapping("/user/email/{email}")
+	public ResponseEntity<?> deleteUser(@PathVariable String email) {
+		return userRepository.findByEmail(email).map(foundUser -> {
+			userRepository.delete(foundUser);
+			return ResponseEntity.ok().build();
+		}).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+	}
+	
 	private void updateUser(User foundUser, @Valid User user) {
 		foundUser.setActive(user.isActive());
 		foundUser.setAddressLine1(user.getAddressLine1());
@@ -78,7 +85,8 @@ public class UserController {
 		foundUser.setCity(user.getCity());
 		foundUser.setCountry(user.getCity());
 		foundUser.setDob(user.getDob());
-		foundUser.setFirstName(user.getEmail());
+		foundUser.setEmail(user.getEmail());
+		foundUser.setFirstName(user.getFirstName());
 		foundUser.setLastName(user.getLastName());
 		foundUser.setMobile(user.getMobile());
 		foundUser.setPassword(user.getPassword());

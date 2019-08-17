@@ -1,4 +1,4 @@
-package com.ujwal.model;
+package com.ujwal.mentorondemand.model;
 
 import java.sql.Date;
 
