@@ -46,6 +46,11 @@ public class UserController {
 		return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 	}
 	
+	@GetMapping("user/role/{roleName}")
+	public List<User> getUserByRole(@PathVariable(value = "roleName") String roleName) {
+		return userRepository.findByUserRoleName(roleName);
+	}
+	
 	@PutMapping("/user/email/{email}")
 	public User updateUser(@PathVariable String email, @Valid @RequestBody User user) {
 		return userRepository.findByEmail(email).map(foundUser -> {
@@ -92,5 +97,6 @@ public class UserController {
 		foundUser.setPassword(user.getPassword());
 		foundUser.setPin(user.getPin());
 		foundUser.setState(user.getState());
+		foundUser.setUserRole(user.getUserRole());
 	}
 }
