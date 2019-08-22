@@ -7,7 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "USER_TAB")
@@ -29,6 +33,7 @@ public class User {
 	@Column(name = "lastName")
 	private String lastName;
 
+	@Temporal(TemporalType.DATE)
 	@Column(name = "dob")
 	private Date dob;
 	
@@ -55,6 +60,10 @@ public class User {
 	
 	@Column(name = "active")
 	private boolean active;
+	
+	@ManyToOne
+	@JoinColumn(name = "role_id")
+	private UserRole userRole;
 	
 	public User() {
 		// TODO Auto-generated constructor stub
@@ -170,5 +179,13 @@ public class User {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public UserRole getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(UserRole userRole) {
+		this.userRole = userRole;
 	}
 }
