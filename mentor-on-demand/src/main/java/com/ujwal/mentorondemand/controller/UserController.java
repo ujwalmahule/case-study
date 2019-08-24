@@ -29,11 +29,16 @@ public class UserController {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private MentorRepository mentorReporitory;
+	private MentorRepository mentorRepository;
 	
 	@GetMapping("/users")
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
+	}
+	
+	@GetMapping("/mentors")
+	public List<Mentor> getAllMentorss() {
+		return mentorRepository.findAll();
 	}
 	
 	@PostMapping("/users")
@@ -43,7 +48,7 @@ public class UserController {
 	
 	@PostMapping("/mentors")
 	public Mentor createUser(@Valid @RequestBody Mentor mentor) {
-		return mentorReporitory.save(mentor);
+		return mentorRepository.save(mentor);
 	}
 	
 	@GetMapping("/users/{id}")
@@ -51,22 +56,24 @@ public class UserController {
 		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 	
+	@GetMapping("/mentors/{id}")
+	public Mentor getMentorById(@PathVariable(value = "id") Long id) {
+		return mentorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Mentor", "id", id));
+	}
+	
 	@GetMapping("/user/email/{email}")
 	public User getUserById(@PathVariable(value = "email") String email) {
 		return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 	}
 	
+	@GetMapping("/mentor/email/{email}")
+	public Mentor getMentorById(@PathVariable(value = "email") String email) {
+		return mentorRepository.findByUserProfileEmail(email).orElseThrow(() -> new ResourceNotFoundException("Mentor", "email", email));
+	}
+	
 	@GetMapping("user/role/{roleName}")
 	public List<User> getUserByRole(@PathVariable(value = "roleName") String roleName) {
 		return userRepository.findByUserRoleName(roleName);
-	}
-	
-	@PutMapping("/user/email/{email}")
-	public User updateUser(@PathVariable String email, @Valid @RequestBody User user) {
-		return userRepository.findByEmail(email).map(foundUser -> {
-			updateUser(foundUser, user);
-			return userRepository.save(foundUser);
-		}).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 	}
 	
 	@PutMapping("/users/{id}")
@@ -76,7 +83,31 @@ public class UserController {
 			return userRepository.save(foundUser);
 		}).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
+	
+	@PutMapping("/mentor/{id}")
+	public Mentor updateMentor(@PathVariable Long id, @Valid @RequestBody Mentor mentor) {
+		return mentorRepository.findById(id).map(foundMentor -> {
+			updateMentor(foundMentor, mentor);
+			return mentorRepository.save(foundMentor);
+		}).orElseThrow(() -> new ResourceNotFoundException("Mentor", "id", id));
+	}
+	
+	@PutMapping("/user/email/{email}")
+	public User updateUser(@PathVariable String email, @Valid @RequestBody User user) {
+		return userRepository.findByEmail(email).map(foundUser -> {
+			updateUser(foundUser, user);
+			return userRepository.save(foundUser);
+		}).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+	}
 
+	@PutMapping("/mentor/email/{email}")
+	public Mentor updateMentor(@PathVariable String email, @Valid @RequestBody Mentor mentor) {
+		return mentorRepository.findByUserProfileEmail(email).map(foundMentor -> {
+			updateMentor(foundMentor, mentor);
+			return mentorRepository.save(foundMentor);
+		}).orElseThrow(() -> new ResourceNotFoundException("Mentor", "email", email));
+	}
+	
 	@DeleteMapping("/users/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable Long id) {
 		return userRepository.findById(id).map(foundUser -> {
@@ -85,12 +116,28 @@ public class UserController {
 		}).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 	
+	@DeleteMapping("/mentor/{id}")
+	public ResponseEntity<?> deleteMentor(@PathVariable Long id) {
+		return mentorRepository.findById(id).map(foundMentor -> {
+			mentorRepository.delete(foundMentor);
+			return ResponseEntity.ok().build();
+		}).orElseThrow(() -> new ResourceNotFoundException("Mentor", "id", id));
+	}
+	
 	@DeleteMapping("/user/email/{email}")
 	public ResponseEntity<?> deleteUser(@PathVariable String email) {
 		return userRepository.findByEmail(email).map(foundUser -> {
 			userRepository.delete(foundUser);
 			return ResponseEntity.ok().build();
 		}).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+	}
+	
+	@DeleteMapping("/mentor/email/{email}")
+	public ResponseEntity<?> deleteMentor(@PathVariable String email) {
+		return mentorRepository.findByUserProfileEmail(email).map(foundMentor -> {
+			mentorRepository.delete(foundMentor);
+			return ResponseEntity.ok().build();
+		}).orElseThrow(() -> new ResourceNotFoundException("Mentor", "email", email));
 	}
 	
 	private void updateUser(User foundUser, @Valid User user) {
@@ -108,5 +155,13 @@ public class UserController {
 		foundUser.setPin(user.getPin());
 		foundUser.setState(user.getState());
 		foundUser.setUserRole(user.getUserRole());
+	}
+	
+	private void updateMentor(Mentor foundMentor, @Valid Mentor mentor) {
+		foundMentor.setExperience(mentor.getExperience());
+		foundMentor.setLinkedIn(mentor.getLinkedIn());
+		foundMentor.setSummary(mentor.getSummary());
+		foundMentor.setVerified(mentor.isVerified());
+		updateUser(foundMentor.getUserProfile(), mentor.getUserProfile());
 	}
 }
