@@ -46,6 +46,9 @@ public class Mentor {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mentor")
 	private List<MentorCalendar> calendar;
 	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mentor")
+	private List<MentorCourse> courses;
+	
 	public User getUserProfile() {
 		return userProfile;
 	}

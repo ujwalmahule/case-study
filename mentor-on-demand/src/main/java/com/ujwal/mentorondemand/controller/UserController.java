@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ujwal.mentorondemand.exception.ResourceNotFoundException;
 import com.ujwal.mentorondemand.model.Mentor;
 import com.ujwal.mentorondemand.model.MentorCalendar;
+import com.ujwal.mentorondemand.model.MentorCourse;
 import com.ujwal.mentorondemand.model.MentorSkill;
 import com.ujwal.mentorondemand.model.Payment;
 import com.ujwal.mentorondemand.model.StudentCourse;
 import com.ujwal.mentorondemand.model.User;
 import com.ujwal.mentorondemand.repository.MentorCalendarRepository;
+import com.ujwal.mentorondemand.repository.MentorCourseRepository;
 import com.ujwal.mentorondemand.repository.MentorRepository;
 import com.ujwal.mentorondemand.repository.MentorSkillRepository;
 import com.ujwal.mentorondemand.repository.PaymentRepository;
@@ -46,7 +48,10 @@ public class UserController {
 	private PaymentRepository paymentRepository;
 	
 	@Autowired
-	private StudentCourseRepository studentCourseRepository; 
+	private StudentCourseRepository studentCourseRepository;
+	
+	@Autowired
+	private MentorCourseRepository mentorCourseRepository;
 	
 	@Autowired 
 	private MentorSkillRepository mentorSkillRepository;
@@ -122,6 +127,16 @@ public class UserController {
 	@GetMapping("/mentors/{id}/skills/{page}/{size}")
 	public Page<MentorSkill> getSkillsByMentorId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
 		return mentorSkillRepository.findByMentorId(id, PageRequest.of(page, size));
+	}
+	
+	@GetMapping("/mentors/{id}/courses")
+	public List<MentorCourse> getCoursesByMentorId(@PathVariable(value = "id") Long id) {
+		return mentorCourseRepository.findByMentorId(id);
+	}
+	
+	@GetMapping("/mentors/{id}/courses/{page}/{size}")
+	public Page<MentorCourse> getCoursesByMentorId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return mentorCourseRepository.findByMentorId(id, PageRequest.of(page, size, Sort.by("paymentDate").descending()));
 	}
 	
 	@GetMapping("/mentors/{id}/calendar")

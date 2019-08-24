@@ -38,7 +38,7 @@ public class Course {
 	private int duration;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="start_date", nullable = false)
+	@Column(name="start_date")
 	private Date startDate;
 	
 	@Lob
