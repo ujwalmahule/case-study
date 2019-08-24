@@ -16,7 +16,7 @@ public class PaymentMode {
 	@Column(name = "id")
 	private int id;
 	
-	@Column(name = "desc")
+	@Column(name = "description", nullable = false)
 	private String desc;
 
 	public int getId() {

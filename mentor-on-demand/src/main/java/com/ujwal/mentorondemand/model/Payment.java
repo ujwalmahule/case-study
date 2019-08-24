@@ -1,6 +1,6 @@
 package com.ujwal.mentorondemand.model;
 
-import java.sql.Timestamp;
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,24 +25,21 @@ public class Payment {
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", nullable = false, updatable = false)
-	@MapsId
 	private User user;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "course_id", nullable = false, updatable = false)
-	@MapsId
 	private Course course;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "Payment_Date", nullable = false, updatable = false)
-	private Timestamp paymentDate;
+	private Calendar paymentDate;
 	
 	@Column(name = "amount")
 	private double amount;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "course_id", nullable = false, updatable = false)
-	@MapsId
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "mode_id")
 	private PaymentMode mode;
 	
 	@Column(name = "credit")
@@ -76,11 +72,11 @@ public class Payment {
 		this.course = course;
 	}
 
-	public Timestamp getPaymentDate() {
+	public Calendar getPaymentDate() {
 		return paymentDate;
 	}
 
-	public void setPaymentDate(Timestamp paymentDate) {
+	public void setPaymentDate(Calendar paymentDate) {
 		this.paymentDate = paymentDate;
 	}
 

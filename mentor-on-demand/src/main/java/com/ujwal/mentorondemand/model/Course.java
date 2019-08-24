@@ -49,7 +49,7 @@ public class Course {
 	private float comission;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "course")
-	private List<MentorSkill> courseSkills;
+	private List<CourseSkill> courseSkills;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "course")
 	private List<MentorCalendar> calendar;
@@ -110,11 +110,11 @@ public class Course {
 		this.comission = comission;
 	}
 
-	public List<MentorSkill> getCourseSkills() {
+	public List<CourseSkill> getCourseSkills() {
 		return courseSkills;
 	}
 
-	public void setCourseSkills(List<MentorSkill> courseSkills) {
+	public void setCourseSkills(List<CourseSkill> courseSkills) {
 		this.courseSkills = courseSkills;
 	}
 
