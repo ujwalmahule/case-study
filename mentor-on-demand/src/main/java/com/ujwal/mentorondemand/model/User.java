@@ -2,6 +2,7 @@ package com.ujwal.mentorondemand.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,13 +10,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ujwal.mentorondemand.validator.ValidateMentor;
+
+@ValidateMentor
 @Entity
-@Table(name = "USER_TAB")
+@Table(name = "USER")
 public class User {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -65,10 +72,10 @@ public class User {
 	@JoinColumn(name = "role_id")
 	private UserRole userRole;
 	
-	public User() {
-		// TODO Auto-generated constructor stub
-	}
-
+	@OneToOne(mappedBy = "userProfile", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private Mentor mentor; 
+	
 	public long getId() {
 		return id;
 	}
@@ -188,4 +195,9 @@ public class User {
 	public void setUserRole(UserRole userRole) {
 		this.userRole = userRole;
 	}
+
+	public Mentor getMentor() {
+		return mentor;
+	}
+
 }

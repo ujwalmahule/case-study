@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ujwal.mentorondemand.exception.ResourceNotFoundException;
+import com.ujwal.mentorondemand.model.Mentor;
 import com.ujwal.mentorondemand.model.User;
+import com.ujwal.mentorondemand.repository.MentorRepository;
 import com.ujwal.mentorondemand.repository.UserRepository;
 
 @RestController
@@ -26,6 +28,9 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private MentorRepository mentorReporitory;
+	
 	@GetMapping("/users")
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
@@ -34,6 +39,11 @@ public class UserController {
 	@PostMapping("/users")
 	public User createUser(@Valid @RequestBody User user) {
 		return userRepository.save(user);
+	}
+	
+	@PostMapping("/mentors")
+	public Mentor createUser(@Valid @RequestBody Mentor mentor) {
+		return mentorReporitory.save(mentor);
 	}
 	
 	@GetMapping("/users/{id}")

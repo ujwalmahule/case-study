@@ -1,25 +1,30 @@
 package com.ujwal.mentorondemand.model;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.ujwal.mentorondemand.validator.ValidateMentor;
+
+@ValidateMentor
 @Entity
 @Table(name = "Mentor")
 public class Mentor {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
 	private long id;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, targetEntity = User.class, fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "id", updatable = false, nullable = false)
 	@MapsId
 	private User userProfile;
 	
@@ -29,23 +34,20 @@ public class Mentor {
 	@Column(name = "linkedIn")
 	private String linkedIn;
 	
+	@Column(name = "summary")
+	private String summary;
+	
 	@Column(name = "verified")
 	private boolean verified;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mentor")
+	private List<MentorSkill> mentorSkills;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mentor")
+	private List<MentorCalendar> calendar;
+	
 	public User getUserProfile() {
 		return userProfile;
-	}
-
-	public void setUserProfile(User userProfile) {
-		this.userProfile = userProfile;
 	}
 
 	public int getExperience() {
@@ -71,5 +73,40 @@ public class Mentor {
 	public void setVerified(boolean verified) {
 		this.verified = verified;
 	}
-	
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public List<MentorSkill> getMentorSkills() {
+		return mentorSkills;
+	}
+
+	public List<MentorCalendar> getCalendar() {
+		return calendar;
+	}
+
+	public void setCalendar(List<MentorCalendar> calendar) {
+		this.calendar = calendar;
+	}
+
+	public void setUserProfile(User userProfile) {
+		this.userProfile = userProfile;
+	}
+
+	public void setMentorSkills(List<MentorSkill> mentorSkills) {
+		this.mentorSkills = mentorSkills;
+	}
 }

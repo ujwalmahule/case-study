@@ -8,16 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "USER_ROLE")
-public class UserRole {
+@Table(name = "payment_mode")
+public class PaymentMode {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 	
-	@Column(name = "name", nullable = false, unique = true)
-	private String name;
+	@Column(name = "desc")
+	private String desc;
 
 	public int getId() {
 		return id;
@@ -27,12 +27,12 @@ public class UserRole {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getDesc() {
+		return desc;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 	
 }
