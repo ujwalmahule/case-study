@@ -75,7 +75,7 @@ public class User {
 	@JoinColumn(name = "role_id")
 	private UserRole userRole;
 	
-	@OneToOne(mappedBy = "userProfile", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "userProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Mentor mentor; 
 
@@ -205,6 +205,10 @@ public class User {
 
 	public Mentor getMentor() {
 		return mentor;
+	}
+
+	public List<Payment> getPayments() {
+		return payments;
 	}
 
 }

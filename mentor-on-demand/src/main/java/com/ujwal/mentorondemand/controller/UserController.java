@@ -5,6 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ujwal.mentorondemand.exception.ResourceNotFoundException;
 import com.ujwal.mentorondemand.model.Mentor;
+import com.ujwal.mentorondemand.model.MentorCalendar;
+import com.ujwal.mentorondemand.model.MentorSkill;
+import com.ujwal.mentorondemand.model.Payment;
+import com.ujwal.mentorondemand.model.StudentCourse;
 import com.ujwal.mentorondemand.model.User;
+import com.ujwal.mentorondemand.repository.MentorCalendarRepository;
 import com.ujwal.mentorondemand.repository.MentorRepository;
+import com.ujwal.mentorondemand.repository.MentorSkillRepository;
+import com.ujwal.mentorondemand.repository.PaymentRepository;
+import com.ujwal.mentorondemand.repository.StudentCourseRepository;
 import com.ujwal.mentorondemand.repository.UserRepository;
 
 @RestController
@@ -31,14 +42,36 @@ public class UserController {
 	@Autowired
 	private MentorRepository mentorRepository;
 	
+	@Autowired
+	private PaymentRepository paymentRepository;
+	
+	@Autowired
+	private StudentCourseRepository studentCourseRepository; 
+	
+	@Autowired 
+	private MentorSkillRepository mentorSkillRepository;
+	
+	@Autowired
+	private MentorCalendarRepository mentorCalendarRepository;
+	
 	@GetMapping("/users")
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
 	}
 	
+	@GetMapping("/users/{page}/{size}")
+	public Page<User> getAllUsers(@PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return userRepository.findAll(PageRequest.of(page, size));
+	}
+	
 	@GetMapping("/mentors")
 	public List<Mentor> getAllMentorss() {
 		return mentorRepository.findAll();
+	}
+	
+	@GetMapping("/mentors/{page}/{size}")
+	public Page<Mentor> getAllMentorss(@PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return mentorRepository.findAll(PageRequest.of(page, size));
 	}
 	
 	@PostMapping("/users")
@@ -56,24 +89,69 @@ public class UserController {
 		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 	
+	@GetMapping("/users/{id}/payments")
+	public List<Payment> getPaymentByUserId(@PathVariable(value = "id") Long id) {
+		return paymentRepository.findByUserId(id);
+	}
+	
+	@GetMapping("/users/{id}/payments/{page}/{size}")
+	public Page<Payment> getPaymentByUserId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return paymentRepository.findByUserId(id, PageRequest.of(page, size, Sort.by("paymentDate").descending()));
+	}
+	
+	@GetMapping("/users/{id}/courses")
+	public List<StudentCourse> getCoursesByUserId(@PathVariable(value = "id") Long id) {
+		return studentCourseRepository.findByStudentId(id);
+	}
+	
+	@GetMapping("/users/{id}/courses/{page}/{size}")
+	public Page<StudentCourse> getCoursesByUserId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return studentCourseRepository.findByStudentId(id, PageRequest.of(page, size, Sort.by("paymentDate").descending()));
+	}
+	
 	@GetMapping("/mentors/{id}")
 	public Mentor getMentorById(@PathVariable(value = "id") Long id) {
 		return mentorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Mentor", "id", id));
 	}
 	
+	@GetMapping("/mentors/{id}/skills")
+	public List<MentorSkill> getSkillsByMentorId(@PathVariable(value = "id") Long id) {
+		return mentorSkillRepository.findByMentorId(id);
+	}
+	
+	@GetMapping("/mentors/{id}/skills/{page}/{size}")
+	public Page<MentorSkill> getSkillsByMentorId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return mentorSkillRepository.findByMentorId(id, PageRequest.of(page, size));
+	}
+	
+	@GetMapping("/mentors/{id}/calendar")
+	public List<MentorCalendar> getCalendarByMentorId(@PathVariable(value = "id") Long id) {
+		return mentorCalendarRepository.findByMentorId(id);
+	}
+	
+	@GetMapping("/mentors/{id}/calendar/{page}/{size}")
+	public Page<MentorCalendar> getCalendarByMentorId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return mentorCalendarRepository.findByMentorId(id, PageRequest.of(page, size));
+	}
+	
 	@GetMapping("/user/email/{email}")
-	public User getUserById(@PathVariable(value = "email") String email) {
+	public User getUserByEmail(@PathVariable(value = "email") String email) {
 		return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 	}
 	
 	@GetMapping("/mentor/email/{email}")
-	public Mentor getMentorById(@PathVariable(value = "email") String email) {
+	public Mentor getMentorByEmail(@PathVariable(value = "email") String email) {
 		return mentorRepository.findByUserProfileEmail(email).orElseThrow(() -> new ResourceNotFoundException("Mentor", "email", email));
 	}
 	
 	@GetMapping("user/role/{roleName}")
 	public List<User> getUserByRole(@PathVariable(value = "roleName") String roleName) {
 		return userRepository.findByUserRoleName(roleName);
+	}
+	
+	@GetMapping("user/role/{roleName}/{page}/{size}")
+	public Page<User> getUserByRole(@PathVariable(value = "roleName") String roleName, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
+		return userRepository.findByUserRoleName(roleName, PageRequest.of(page, size));
 	}
 	
 	@PutMapping("/users/{id}")

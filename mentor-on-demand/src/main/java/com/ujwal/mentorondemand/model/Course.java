@@ -39,7 +39,7 @@ public class Course {
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date", nullable = false)
-	private Date start_date;
+	private Date startDate;
 	
 	@Lob
 	@Column(name = "toc", nullable = false)
@@ -86,12 +86,12 @@ public class Course {
 		this.duration = duration;
 	}
 
-	public Date getStart_date() {
-		return start_date;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setStart_date(Date start_date) {
-		this.start_date = start_date;
+	public void setStartDate(Date start_date) {
+		this.startDate = start_date;
 	}
 
 	public String getToc() {
