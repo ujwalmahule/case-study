@@ -37,7 +37,7 @@ public class Course {
 	private Date startDate;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "template_id")
+	@JoinColumn(name = "template_id", updatable = false, insertable = false, nullable = false)
 	private CourseTemplate details;
 	
 	@ManyToOne

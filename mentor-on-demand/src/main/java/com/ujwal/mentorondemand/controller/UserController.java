@@ -139,11 +139,6 @@ public class UserController {
 		return mentorCourseRepository.findByMentorId(id, PageRequest.of(page, size, Sort.by("paymentDate").descending()));
 	}
 	
-	@GetMapping("/mentors/{id}/calendar")
-	public List<MentorCalendar> getCalendarByMentorId(@PathVariable(value = "id") Long id) {
-		return mentorCalendarRepository.findByMentorId(id);
-	}
-	
 	@GetMapping("/mentors/{id}/calendar/{page}/{size}")
 	public Page<MentorCalendar> getCalendarByMentorId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
 		return mentorCalendarRepository.findByMentorId(id, PageRequest.of(page, size));

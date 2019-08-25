@@ -15,3 +15,4 @@ insert into course_status (description) values ('Completed');
 insert into course_template_status (description) values ('Draft');
 insert into course_template_status (description) values ('Finalized');
 insert into course_template_status (description) values ('Approved');
+insert into course_template_status (description) values ('Discontinued');
