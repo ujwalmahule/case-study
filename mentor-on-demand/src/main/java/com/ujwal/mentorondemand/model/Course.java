@@ -10,7 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,25 +29,20 @@ public class Course {
 	@Column(name = "id")
 	private long id;
 	
-	@Column(name = "name", unique = true)
-	private String name;
-
-	@Column(name = "fee", nullable = false)
-	private double fee;
-	
-	@Column(name = "duration", nullable = false)
-	private int duration;
+	@Column(name = "batch_name", nullable = false)
+	private String batchName;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date")
 	private Date startDate;
 	
-	@Lob
-	@Column(name = "toc", nullable = false)
-	private String toc;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "template_id")
+	private CourseTemplate details;
 	
-	@Column(name = "comission", nullable = false)
-	private float comission;
+	@ManyToOne
+	@JoinColumn(name = "status_id")
+	private CourseStatus status;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "course")
 	private List<CourseSkill> courseSkills;
@@ -62,52 +58,28 @@ public class Course {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public double getFee() {
-		return fee;
-	}
-
-	public void setFee(double fee) {
-		this.fee = fee;
-	}
-
-	public int getDuration() {
-		return duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-
 	public Date getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date start_date) {
-		this.startDate = start_date;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
-	public String getToc() {
-		return toc;
+	public CourseTemplate getDetails() {
+		return details;
 	}
 
-	public void setToc(String toc) {
-		this.toc = toc;
+	public void setDetails(CourseTemplate details) {
+		this.details = details;
 	}
 
-	public float getComission() {
-		return comission;
+	public CourseStatus getStatus() {
+		return status;
 	}
 
-	public void setComission(float comission) {
-		this.comission = comission;
+	public void setStatus(CourseStatus status) {
+		this.status = status;
 	}
 
 	public List<CourseSkill> getCourseSkills() {
@@ -124,6 +96,14 @@ public class Course {
 
 	public void setCalendar(List<MentorCalendar> calendar) {
 		this.calendar = calendar;
+	}
+
+	public String getBatchName() {
+		return batchName;
+	}
+
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
 	}
 	
 }
