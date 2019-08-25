@@ -94,11 +94,6 @@ public class UserController {
 		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 	
-	@GetMapping("/users/{id}/payments")
-	public List<Payment> getPaymentByUserId(@PathVariable(value = "id") Long id) {
-		return paymentRepository.findByUserId(id);
-	}
-	
 	@GetMapping("/users/{id}/payments/{page}/{size}")
 	public Page<Payment> getPaymentByUserId(@PathVariable(value = "id") Long id, @PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
 		return paymentRepository.findByUserId(id, PageRequest.of(page, size, Sort.by("paymentDate").descending()));
