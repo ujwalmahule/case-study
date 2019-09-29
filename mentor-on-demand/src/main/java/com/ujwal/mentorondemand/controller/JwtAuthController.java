@@ -1,5 +1,7 @@
 package com.ujwal.mentorondemand.controller;
 
+import static com.ujwal.mentorondemand.config.Constants.TOKEN_PREFIX;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +39,7 @@ public class JwtAuthController {
         authenticate(userName, loginUser.getPassword());
         final User user = userService.findOne(userName);
         final String token = jwtTokenUtil.generateToken(user);
-        return new ApiResponse<>(200, "success",new AuthToken(userName, token));
+        return new ApiResponse<>(200, "success",new AuthToken(userName, TOKEN_PREFIX + token));
     }
 
 	private void authenticate(String userName, String password) {

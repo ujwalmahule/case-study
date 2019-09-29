@@ -1,7 +1,10 @@
 package com.ujwal.mentorondemand.controller;
 
+import static com.ujwal.mentorondemand.constants.USER_ROLE.ADMIN;
+
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ujwal.mentorondemand.exception.ResourceNotFoundException;
+import com.ujwal.mentorondemand.exception.UserError;
 import com.ujwal.mentorondemand.model.Mentor;
 import com.ujwal.mentorondemand.model.MentorCalendar;
 import com.ujwal.mentorondemand.model.MentorCourse;
@@ -63,6 +67,7 @@ public class UserController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
+	@RolesAllowed(ADMIN)
 	@GetMapping("/users")
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
@@ -91,7 +96,10 @@ public class UserController {
 	
 	@PostMapping("/signup")
 	public User signup(@Valid @RequestBody User user) {
-		user.setActive(false);
+		userRepository.findByEmail(user.getEmail()).ifPresent(foundUser -> {throw new UserError("User", "User already exists");});
+		//by default the user is active, with no roles
+		user.setActive(true);
+		user.setUserRole(null);
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}

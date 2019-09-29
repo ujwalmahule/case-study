@@ -4,19 +4,13 @@ import static com.ujwal.mentorondemand.config.Constants.ACCESS_TOKEN_VALIDITY;
 import static com.ujwal.mentorondemand.config.Constants.SIGNING_KEY;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Function;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.ujwal.mentorondemand.model.User;
-import com.ujwal.mentorondemand.model.UserRole;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -58,29 +52,17 @@ public class JwtTokenUtil implements Serializable {
 
     //generate token for user
     public String generateToken(User user) {
-        return doGenerateToken(user.getEmail(), getRoles(user));
+        return doGenerateToken(user.getEmail());
     }
-
-    public static List<GrantedAuthority> getRoles(User user) {
-    	UserRole role = user.getUserRole();
-    	List<GrantedAuthority> roles;
-		if(role == null) {
-    		roles = new ArrayList<GrantedAuthority>();
-    	} else { 
-			roles = Arrays.asList(role == null ? null : new SimpleGrantedAuthority(role.getName()));
-    	}
-    	return roles;
-	}
 
 	//while creating the token -
     //1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID
     //2. Sign the JWT using the HS512 algorithm and secret key.
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string 
-    private String doGenerateToken(String subject, List<GrantedAuthority> roles) {
+    private String doGenerateToken(String subject) {
 
         Claims claims = Jwts.claims().setSubject(subject);
-        claims.put("scopes", roles);
 
         return Jwts.builder()
                 .setClaims(claims)
