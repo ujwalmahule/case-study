@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +60,9 @@ public class UserController {
 	@Autowired
 	private MentorCalendarRepository mentorCalendarRepository;
 	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	@GetMapping("/users")
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
@@ -81,11 +85,20 @@ public class UserController {
 	
 	@PostMapping("/users")
 	public User createUser(@Valid @RequestBody User user) {
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		return userRepository.save(user);
+	}
+	
+	@PostMapping("/signup")
+	public User signup(@Valid @RequestBody User user) {
+		user.setActive(false);
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
 	
 	@PostMapping("/mentors")
 	public Mentor createUser(@Valid @RequestBody Mentor mentor) {
+		mentor.getUserProfile().setPassword(bCryptPasswordEncoder.encode(mentor.getUserProfile().getPassword()));
 		return mentorRepository.save(mentor);
 	}
 	
@@ -234,7 +247,9 @@ public class UserController {
 		foundUser.setFirstName(user.getFirstName());
 		foundUser.setLastName(user.getLastName());
 		foundUser.setMobile(user.getMobile());
-		foundUser.setPassword(user.getPassword());
+		if(user.getPassword()!=null) {
+			foundUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		}
 		foundUser.setPin(user.getPin());
 		foundUser.setState(user.getState());
 		foundUser.setUserRole(user.getUserRole());
