@@ -1,6 +1,8 @@
 package com.ujwal.mentorondemand.controller;
 
 import static com.ujwal.mentorondemand.constants.USER_ROLE.ADMIN;
+import static com.ujwal.mentorondemand.constants.USER_ROLE.MENTOR;
+import static com.ujwal.mentorondemand.constants.USER_ROLE.STUDENT;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,27 +76,32 @@ public class UserController {
 		return userRepository.findAll();
 	}
 	
+	@RolesAllowed(ADMIN)
 	@GetMapping("/users/{page}/{size}")
 	public Page<User> getAllUsers(@PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
 		return userRepository.findAll(PageRequest.of(page, size));
 	}
 	
+	@RolesAllowed({ADMIN, MENTOR, STUDENT})
 	@GetMapping("/mentors")
 	public List<Mentor> getAllMentorss() {
 		return mentorRepository.findAll();
 	}
 	
+	@RolesAllowed({ADMIN, MENTOR, STUDENT})
 	@GetMapping("/mentors/{page}/{size}")
 	public Page<Mentor> getAllMentorss(@PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
 		return mentorRepository.findAll(PageRequest.of(page, size));
 	}
 	
+	@RolesAllowed(ADMIN)
 	@PostMapping("/users")
 	public User createUser(@Valid @RequestBody User user) {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
 	
+	@RolesAllowed(ADMIN)
 	@PostMapping("/signup")
 	public User signup(@Valid @RequestBody User user) {
 		userRepository.findByEmail(user.getEmail()).ifPresent(foundUser -> {throw new UserError("User", "User already exists");});
@@ -104,12 +112,14 @@ public class UserController {
 		return userRepository.save(user);
 	}
 	
+	@RolesAllowed(ADMIN)
 	@PostMapping("/mentors")
 	public Mentor createUser(@Valid @RequestBody Mentor mentor) {
 		mentor.getUserProfile().setPassword(bCryptPasswordEncoder.encode(mentor.getUserProfile().getPassword()));
 		return mentorRepository.save(mentor);
 	}
 	
+	@PostAuthorize("hasRole('"+ADMIN+"') OR returnObject.email == authentication.principal.username")
 	@GetMapping("/users/{id}")
 	public User getUserById(@PathVariable(value = "id") Long id) {
 		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
