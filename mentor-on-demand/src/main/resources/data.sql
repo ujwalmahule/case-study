@@ -6,6 +6,7 @@ insert into payment_mode (description) values ('Cash');
 insert into payment_mode (description) values ('Credit Card');
 insert into payment_mode (description) values ('Debit Card');
 insert into payment_mode (description) values ('Bank Transfer');
+insert into payment_mode (description) values ('Wallet');
 
 insert into course_status (description) values ('Requested');
 insert into course_status (description) values ('Approved');

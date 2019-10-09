@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ujwal.mentorondemand.exception.ResourceNotFoundException;
 import com.ujwal.mentorondemand.model.Payment;
+import com.ujwal.mentorondemand.model.Wallet;
 import com.ujwal.mentorondemand.repository.PaymentRepository;
+import com.ujwal.mentorondemand.repository.UserRepository;
+import com.ujwal.mentorondemand.repository.WalletRepository;
 
 @RestController
 @RequestMapping("/api")
@@ -21,6 +25,12 @@ public class PaymentController {
 
 	@Autowired
 	private PaymentRepository paymentRepository;
+	
+	@Autowired
+	private WalletRepository walletRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping("/payments/{page}/{size}")
 	public Page<Payment> findAllPayments(@PathVariable(value = "page") int page, @PathVariable(value = "size") int size) {
@@ -40,5 +50,21 @@ public class PaymentController {
 	@PostMapping("/payment")
 	public Payment createUser(@Valid @RequestBody Payment payment) {
 		return paymentRepository.save(payment);
+	}
+	
+	@GetMapping("/addToWallet/{userId}/{amount}")
+	public Wallet addToWallet(@PathVariable(value = "userId") long userId, @PathVariable(value = "amount") long amount) {
+		Wallet wallet = (userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId))).getWallet();
+		double balance = wallet.getBalance() + amount ;
+		wallet.setBalance(balance);
+		return walletRepository.save(wallet);
+	}
+	
+	@GetMapping("/deductFromWallet/{userId}/{amount}")
+	public Wallet deductFromWallet(@PathVariable(value = "userId") long userId, @PathVariable(value = "amount") long amount) {
+		Wallet wallet = (userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId))).getWallet();
+		double balance = wallet.getBalance() - amount ;
+		wallet.setBalance(balance);
+		return walletRepository.save(wallet);
 	}
 }

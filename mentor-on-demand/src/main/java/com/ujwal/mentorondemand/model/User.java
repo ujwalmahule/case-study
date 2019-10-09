@@ -77,7 +77,13 @@ public class User {
 	
 	@OneToOne(mappedBy = "userProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
-	private Mentor mentor; 
+	private Mentor mentor;
+	
+	
+	@OneToOne(cascade = CascadeType.ALL, targetEntity = Wallet.class, fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "wallet_id", updatable = false, nullable = false)
+	private Wallet wallet;
+	
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	@JsonIgnore
@@ -209,6 +215,14 @@ public class User {
 
 	public List<Payment> getPayments() {
 		return payments;
+	}
+
+	public Wallet getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
 	}
 
 }

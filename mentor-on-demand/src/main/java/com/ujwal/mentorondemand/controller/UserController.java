@@ -101,7 +101,6 @@ public class UserController {
 		return userRepository.save(user);
 	}
 	
-	@RolesAllowed(ADMIN)
 	@PostMapping("/signup")
 	public User signup(@Valid @RequestBody User user) {
 		userRepository.findByEmail(user.getEmail()).ifPresent(foundUser -> {throw new UserError("User", "User already exists");});
